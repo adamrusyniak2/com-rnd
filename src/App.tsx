@@ -26,13 +26,6 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-// -------------------------------------------------------------
-// Color tokens (approx. Clouds on Mars palette vibes):
-// Mars Red: #E24A4A | Coral: #FF6B6B | Amber: #F59E0B
-// Deep Space: #0B1020 | Indigo: #312E81 | Slate accents
-// -------------------------------------------------------------
-
-// Small helpers
 const Section = ({ id, label, subtitle, children }: { id?: string; label: string; subtitle?: string; children: React.ReactNode }) => (
   <section id={id} className="relative py-16 sm:py-24">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,9 +50,6 @@ const Section = ({ id, label, subtitle, children }: { id?: string; label: string
   </section>
 );
 
-// ----------------------------
-// Weight Loss Projection Demo
-// ----------------------------
 function useWeightLossData(k: number, tMax: number, noise = 0) {
   return useMemo(() => {
     const pts: { t: number; y: number; yLo: number; yHi: number }[] = [];
@@ -68,7 +58,6 @@ function useWeightLossData(k: number, tMax: number, noise = 0) {
       const ideal = Math.exp(-k * t);
       const eps = noise ? (Math.random() - 0.5) * 2 * noise * ideal : 0;
       const y = Math.max(0, ideal + eps);
-      // 95% PI mock: ±(10% * y) for demo purposes
       pts.push({ t, y, yLo: Math.max(0, y * 0.9), yHi: Math.min(1, y * 1.1) });
     }
     return pts;
@@ -76,9 +65,9 @@ function useWeightLossData(k: number, tMax: number, noise = 0) {
 }
 
 const WeightLossProjection: React.FC = () => {
-  const [k, setK] = useState(0.03); // decay rate
+  const [k, setK] = useState(0.03);
   const [noise, setNoise] = useState(0.02);
-  const t90 = useMemo(() => Math.log(10) / k, [k]); // time to 90% loss (reach 10% of initial)
+  const t90 = useMemo(() => Math.log(10) / k, [k]);
   const tMax = Math.ceil(t90 * 1.2);
   const data = useWeightLossData(k, tMax, noise);
 
@@ -176,9 +165,6 @@ const WeightLossProjection: React.FC = () => {
   );
 };
 
-// ----------------------------
-// Drivers of Liking Demo
-// ----------------------------
 const SAMPLE_FEATURES: Record<string, Record<string, number>> = {
   "Day 1": { Freshness: 0.24, Sillage: 0.18, Longevity: 0.12, Price: 0.06, Brand: 0.05, "Eco Score": 0.08, Package: 0.10, Texture: 0.17 },
   "Day 7": { Freshness: 0.18, Sillage: 0.22, Longevity: 0.16, Price: 0.05, Brand: 0.04, "Eco Score": 0.09, Package: 0.08, Texture: 0.18 },
@@ -194,12 +180,13 @@ const DriversOfLiking: React.FC = () => {
   }, [tp, noise]);
 
   const stability = useMemo(() => {
-    // Mock Kendall tau-ish stability proxy vs Day1 ordering
     const ref = Object.entries(SAMPLE_FEATURES["Day 1"]).sort((a, b) => b[1] - a[1]).map(([n]) => n);
     const order = [...features].sort((a, b) => b.value - a.value).map((f) => f.name);
     let matches = 0;
-    for (let i = 0; i < order.length; i++) if (order[i] == ref[i]): matches += 1;
-    return (matches / order.length) * 0.3 + 0.7 - noise * 0.5; // 0.7..1.0
+    for (let i = 0; i < order.length; i++) {
+      if (order[i] === ref[i]) { matches += 1; }
+    }
+    return (matches / order.length) * 0.3 + 0.7 - noise * 0.5;
   }, [features, noise]);
 
   return (
@@ -280,9 +267,6 @@ const DriversOfLiking: React.FC = () => {
   );
 };
 
-// ----------------------------------
-// Azure Classic vs Microsoft Fabric
-// ----------------------------------
 const CapabilityRow: React.FC<{ name: string; classic: boolean; fabric: boolean }> = ({ name, classic, fabric }) => (
   <div className="grid grid-cols-3 items-center py-2 px-3 rounded-xl hover:bg-white/5 transition">
     <div className="text-slate-200 text-sm">{name}</div>
@@ -297,14 +281,14 @@ const CapabilityRow: React.FC<{ name: string; classic: boolean; fabric: boolean 
 
 const AzureComparison: React.FC = () => {
   const rows = [
-    { name: "OneLake (unified storage)", classic: False, fabric: True },
-    { name: "Delta / Lakehouse", classic: True, fabric: True },
-    { name: "Pipelines / ADF", classic: True, fabric: True },
-    { name: "AutoML / MLflow", classic: True, fabric: True },
-    { name: "Real‑Time Intelligence (KQL)", classic: False, fabric: True },
-    { name: "Embedded Analytics (PBI)", classic: True, fabric: True },
-    { name: "Shortcuts (no-copy links)", classic: False, fabric: True },
-    { name: "MLOps registry", classic: True, fabric: True },
+    { name: "OneLake (unified storage)", classic: false, fabric: true },
+    { name: "Delta / Lakehouse", classic: true, fabric: true },
+    { name: "Pipelines / ADF", classic: true, fabric: true },
+    { name: "AutoML / MLflow", classic: true, fabric: true },
+    { name: "Real‑Time Intelligence (KQL)", classic: false, fabric: true },
+    { name: "Embedded Analytics (PBI)", classic: true, fabric: true },
+    { name: "Shortcuts (no-copy links)", classic: false, fabric: true },
+    { name: "MLOps registry", classic: true, fabric: true },
   ];
   return (
     <div className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 p-6">
@@ -325,9 +309,6 @@ const AzureComparison: React.FC = () => {
   );
 };
 
-// -----------------
-// Milestones
-// -----------------
 const MILESTONES = [
   { title: "Kick‑off & Discovery", weeks: 2, done: 1 },
   { title: "Data Engineering", weeks: 5, done: 2 },
@@ -370,9 +351,6 @@ const Timeline: React.FC = () => (
   </div>
 );
 
-// -----------------
-// CTA card (no form, just a clean link)
-// -----------------
 const CTA: React.FC = () => (
   <div className="relative rounded-3xl overflow-hidden ring-1 ring-white/10 bg-gradient-to-br from-rose-500/20 via-indigo-600/10 to-black p-[1px]">
     <div className="rounded-3xl bg-[#0B1020]/80 p-8 md:p-12">
@@ -398,20 +376,15 @@ const CTA: React.FC = () => (
   </div>
 );
 
-// -----------------
-// App Shell
-// -----------------
 const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#0B1020] text-slate-200 relative">
-      {/* Starry gradient background */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 -right-40 h-96 w-96 bg-rose-500/20 blur-3xl rounded-full" />
         <div className="absolute top-1/3 -left-40 h-96 w-96 bg-indigo-500/20 blur-3xl rounded-full" />
         <div className="absolute bottom-0 right-1/3 h-64 w-64 bg-amber-400/10 blur-3xl rounded-full" />
       </div>
 
-      {/* Header */}
       <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-[#0B1020]/70 bg-[#0B1020]/80 ring-1 ring-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -427,7 +400,6 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      {/* Hero */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <motion.h1
@@ -470,7 +442,6 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Apps */}
       <Section id="apps" label="Interactive" subtitle="Apps, extended beyond the deck">
         <div className="grid lg:grid-cols-2 gap-10">
           <WeightLossProjection />
@@ -478,7 +449,6 @@ const App: React.FC = () => {
         </div>
       </Section>
 
-      {/* Platform */}
       <Section id="platform" label="Architecture" subtitle="Azure today, Fabric tomorrow—your data, one platform">
         <div className="grid lg:grid-cols-2 gap-10 items-stretch">
           <div className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 p-6 space-y-5">
@@ -519,17 +489,14 @@ const App: React.FC = () => {
         </div>
       </Section>
 
-      {/* Timeline */}
       <Section id="timeline" label="Delivery" subtitle="A pragmatic, milestone‑driven plan">
         <Timeline />
       </Section>
 
-      {/* CTA */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <CTA />
       </div>
 
-      {/* Footer */}
       <footer className="py-10 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div>© {new Date().getFullYear()} Clouds on Mars · Advanced Analytics</div>
